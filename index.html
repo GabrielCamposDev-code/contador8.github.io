@@ -4,46 +4,59 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Contador de Acessos</title>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
-</head>
-<body>
-    <h1>Contador de Acessos</h1>
-    <p>Acessos: <span id="contador">0</span></p>
 
-    <script>
-        // Configurações do Firebase
+<script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-analytics.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
 
-      const firebaseConfig = {
+  // Your web app's Firebase configuration
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  const firebaseConfig = {
     apiKey: "AIzaSyAgYNicNiKtSyePCCPr7ZWI1bEoEuy4I44",
     authDomain: "pagina-inicial-afasia.firebaseapp.com",
     databaseURL: "https://pagina-inicial-afasia-default-rtdb.firebaseio.com",
     projectId: "pagina-inicial-afasia",
-    storageBucket: "pagina-inicial-afasia.appspot.com",
+    storageBucket: "pagina-inicial-afasia.firebasestorage.app",
     messagingSenderId: "431252256861",
     appId: "1:431252256861:web:902fcce87bb3d87f8af5b4",
     measurementId: "G-MXSCPG0WBZ"
   };
-      // Inicializando o Firebase
+
+  // Inicializa o Firebase
         const app = firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
 
-        // Função para incrementar o contador
-        function incrementarContador() {
+        async function incrementarContador() {
             const contadorRef = database.ref('contador');
-            contadorRef.transaction((atual) => {
-                return (atual || 0) + 1;
+
+            // Incrementa o contador
+            contadorRef.transaction((currentValue) => {
+                return (currentValue || 0) + 1;
             });
         }
 
-        // Listener para atualizar o contador em tempo real
-        database.ref('contador').on('value', (snapshot) => {
-            const valor = snapshot.val() || 0;
-            document.getElementById('contador').textContent = valor;
-        });
+        function atualizarContador() {
+            const contadorRef = database.ref('contador');
+            contadorRef.on('value', (snapshot) => {
+                const contador = snapshot.val() || 0;
+                document.getElementById('contador').innerText = contador;
+            });
+        }
 
-        // Incrementa o contador quando a página é carregada
-        window.onload = incrementarContador;
+        // Chama as funções quando a página é carregada
+        window.onload = function() {
+            incrementarContador();
+            atualizarContador();
+        };
     </script>
+</head>
+<body>
+    <h1>Contador de Acessos</h1>
+    <p>Acessos ao site: <span id="contador">0</span></p>
 </body>
 </html>
+        
+</script>
